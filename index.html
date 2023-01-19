@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemón</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+    </style>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    
+    <section id="select_pet">
+        
+        <h1>Pokemón 🔥💧⚡🌱</h1>
+
+        <h2 class="subtitle">Choose your Pet:</h2>
+
+        <div class="cards">
+            <input type="radio" name="pets" id="Hipodoge">
+            <label for="Hipodoge">
+                <p>Hipodoge</p>
+                <img src="assets/mokepons_mokepon_hipodoge_attack.png" alt="Hipodoge">
+            </label>
+            <input type="radio" name="pets" id="Capipepo">
+            <label for="Capipepo">
+                <p>Capipepo</p>
+                <img src="assets/mokepons_mokepon_capipepo_attack.png" alt="Capipepo">
+            </label>
+            <input type="radio" name="pets" id="Ratigueya">
+            <label for="Ratigueya">
+                <p>Ratigueya</p>
+                <img src="assets/mokepons_mokepon_ratigueya_attack.png" alt="Ratigueya">
+            </label>
+        
+
+        </div>
+
+
+        <!--
+        Hipodoge -> Agua
+        Capipepo -> Tierra
+        Ratigueya -> Fuego
+        Lasgostelvis -> Agua y Fuego
+        Tucapalma -> Agua y Tierra
+        Pydos -> Tierra y Fuego
+        -->
+
+
+        <button id="button-pet">Select</button>
+
+    </section>
+
+
+    <section id="select_attack">
+
+        <h1>Pokemón 🔥💧⚡🌱</h1>
+
+        <h2 class="subtitle">Choose your Attack:</h2>
+
+        <div class="attack-button-group">
+            <Button class="attack-button" id="button-Fire">Fire 🔥</Button>
+            <Button class="attack-button" id="button-Volt">Volt ⚡</Button>
+            <Button class="attack-button" id="button-Ground">Ground 🌱</Button>
+            <Button class="attack-button" id="button-Water">Water 💧</Button>
+
+        </div>
+
+        <div id="messages">
+
+            <p id="result">Fight!</p>
+            
+            <section id="restart">
+                <button id="restart-button">Restart</button>
+            </section>
+            
+        </div>
+        
+        <div class="attacks-cards">
+
+            <div class="player-card">
+
+                <p id="player-pet-lives">3</p>
+                <p id="pet-name-player"></p>
+                <p id="player-attacks-list"></p>
+            </div>
+
+            <div class="enemy-card">
+
+                <p id="enemy-pet-lives">3</p>
+                <p id="pet-name-enemy"></p>
+                <p id="enemy-attacks-list"></p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <script src="./js/script.js"></script>
+
+</body>
+</html>
