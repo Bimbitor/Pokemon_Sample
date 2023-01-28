@@ -8,10 +8,13 @@ let GroundButton;
 let WaterButton;
 let attacksOptionsButtons = [];
 let playerAttacks = [];
+let enemyAttacks = [];
 
 let enemyPetAttacks;
+let usedEnemyAttacksIndexes = []
 
-
+let comp
+let round = 0;
 
 const sectionSelectPet = document.getElementById('select_pet');
 let  inputHipodoge;
@@ -41,8 +44,8 @@ let selectedPlayerAttack;
 let selectedEnemyAttack;
 let mokeponOption;
 let attackOption;
-let playerPetLives = 3;
-let enemyPetLives = 3;
+let playerPetLives = 5;
+let enemyPetLives = 5;
 let pets = []
 
 
@@ -131,11 +134,11 @@ function selectPlayerPet (){
         alert("Please, select a pet")
     }
 
-    extractAttacks(selectedPlayerPet);
+    extractPlayerAttacks(selectedPlayerPet);
     selectEnemyPet();
 }
 
-function extractAttacks(selectedPlayerPet){
+function extractPlayerAttacks(selectedPlayerPet){
     let attacks;
     for (let i = 0; i < pets.length; i++) {
         if (selectedPlayerPet === pets[i].name) {
@@ -157,13 +160,32 @@ function showAttacks(attacks) {
         `
         attacksOptionsContainer.innerHTML += attackOption;
     })
-
+    
     FireButton = document.getElementById('button-Fire');
     VoltButton = document.getElementById('button-Volt');
     GroundButton = document.getElementById('button-Ground');
     WaterButton = document.getElementById('button-Water');
-
+    
     attacksOptionsButtons = document.querySelectorAll('.button-class-listener');
+}
+
+function selectEnemyPet(){
+    let aleatoryEnemyPet = aleatory(0, pets.length - 1);
+    spanNameEnemyPet.innerHTML = pets[aleatoryEnemyPet].name;
+    selectedEnemyPet = pets[aleatoryEnemyPet].name;
+
+    extractEnemyAttacks(selectedEnemyPet)
+    attackSequence();
+}
+
+
+function extractEnemyAttacks(selectedEnemyPet){
+
+    for (let i = 0; i < pets.length; i++) {
+        if (selectedEnemyPet === pets[i].name) {
+            enemyPetAttacks = pets[i].attacks;
+        }
+    }
 }
 
 function attackSequence(){
@@ -171,65 +193,78 @@ function attackSequence(){
         button.addEventListener('click', (e) => {
             
             if (e.target.textContent == "Fire 🔥") {
+                selectedPlayerAttack = "Fire 🔥";
                 playerAttacks.push("Fire 🔥")
                 console.log(playerAttacks);
                 button.disabled = true;
             } else if (e.target.textContent == "Volt ⚡") {
+                selectedPlayerAttack = "Volt ⚡";
                 playerAttacks.push("Volt ⚡")
                 console.log(playerAttacks);
                 button.disabled = true;
             } else if (e.target.textContent == "Ground 🌱") {
+                selectedPlayerAttack = "Ground 🌱";
                 playerAttacks.push("Ground 🌱")
                 console.log(playerAttacks);
                 button.disabled = true;
             } else if (e.target.textContent == "Water 💧") {
+                selectedPlayerAttack = "Water 💧";
                 playerAttacks.push("Water 💧")
                 console.log(playerAttacks);
                 button.disabled = true;
             } else {
-
+                
             }
+
+            enemyAttack();
         })
     })
-    enemyAttack();
-}
-
-function selectEnemyPet(){
-    let aleatoryEnemyPet = aleatory(0, pets.length - 1);
-
-    spanNameEnemyPet.innerHTML = pets[aleatoryEnemyPet].name;
-    enemyPetAttacks = pets[aleatoryEnemyPet].attacks;
-    attackSequence();
 }
 
 function enemyAttack(){
 
-    aleatoryEnemyAttack = Math.floor(Math.random() * enemyPetAttacks.length);
-    selectedEnemyAttack = enemyPetAttacks[aleatoryEnemyAttack];
-    combatResult()
+    
+    let aleatoryEnemyAttack = aleatory(0, enemyPetAttacks.length -1);
+    if (usedEnemyAttacksIndexes.length == 0) {
+        usedEnemyAttacksIndexes.push(aleatoryEnemyAttack)
+        enemyAttacks.push(enemyPetAttacks[aleatoryEnemyAttack].name);
+        selectedEnemyAttack = enemyPetAttacks[aleatoryEnemyAttack].name;
+    } else {
+        compare = usedEnemyAttacksIndexes.find(value => value == aleatoryEnemyAttack);
+        if (compare == undefined) {
+            usedEnemyAttacksIndexes.push(aleatoryEnemyAttack)
+            enemyAttacks.push(enemyPetAttacks[aleatoryEnemyAttack].name);
+            selectedEnemyAttack = enemyPetAttacks[aleatoryEnemyAttack].name;
+            console.log(usedEnemyAttacksIndexes)
+        }else{
+            enemyAttack()
+        }
+    }
+    console.log(enemyAttacks)
+    combat()
     
 }
 
-function combatResult(){
+function combat(){
 
     if (selectedPlayerAttack == selectedEnemyAttack) {
         createResultMessage("Tie")
-    }else if (selectedPlayerAttack == "Fire" && selectedEnemyAttack == "Ground"){
+    }else if (selectedPlayerAttack == "Fire 🔥" && selectedEnemyAttack == "Ground 🌱"){
         enemyPetLives--;
         createResultMessage("Won")
-    }else if (selectedPlayerAttack == "Water" && selectedEnemyAttack == "Volt"){
+    }else if (selectedPlayerAttack == "Water 💧" && selectedEnemyAttack == "Volt ⚡"){
         enemyPetLives--;
         createResultMessage("Won")
-    }else if (selectedPlayerAttack == "Water" && selectedEnemyAttack == "Fire"){
+    }else if (selectedPlayerAttack == "Water 💧" && selectedEnemyAttack == "Fire 🔥"){
         enemyPetLives--;
         createResultMessage("Won")
-    }else if (selectedPlayerAttack == "Ground" && selectedEnemyAttack == "Water"){
+    }else if (selectedPlayerAttack == "Ground 🌱" && selectedEnemyAttack == "Water 💧"){
         enemyPetLives--;
         createResultMessage("Won")
-    }else if (selectedPlayerAttack == "Ground" && selectedEnemyAttack == "Volt"){
+    }else if (selectedPlayerAttack == "Ground 🌱" && selectedEnemyAttack == "Volt ⚡"){
         enemyPetLives--;
         createResultMessage("Won")
-    }else if (selectedPlayerAttack == "Volt" && selectedEnemyAttack == "Fire"){
+    }else if (selectedPlayerAttack == "Volt ⚡" && selectedEnemyAttack == "Fire 🔥"){
         enemyPetLives--;
         createResultMessage("Won")
     }else{
@@ -240,16 +275,25 @@ function combatResult(){
 
     spanEnemyLives.innerHTML = enemyPetLives.toString()
     spanPlayerLives.innerHTML = playerPetLives.toString()
+    round ++;
 
-    checkLives()
+    checkAttacks()
 
 }
 
+function checkAttacks() {
+    if (round == 5) {
+        checkLives()
+    }
+}
+
 function checkLives() {
-    if (playerPetLives == 0) {
-        createFinalMessage("Lose");
-    } else if(enemyPetLives == 0){
+    if (playerPetLives == enemyPetLives) {
+        createFinalMessage("Tie");
+    } else if(playerPetLives > enemyPetLives){
         createFinalMessage("Won");
+    } else {
+        createFinalMessage("Lose");
     }
 }
 
