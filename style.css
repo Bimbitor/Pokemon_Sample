@@ -82,6 +82,16 @@ h1{
     }
 }
 
+#map-section{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#map{
+    border: 2px solid black;
+}
+
 #select_attack{
     flex-direction: column;
     justify-content: center;

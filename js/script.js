@@ -15,6 +15,7 @@ let usedEnemyAttacksIndexes = []
 
 let comp
 let round = 0;
+let interval
 
 const sectionSelectPet = document.getElementById('select_pet');
 let  inputHipodoge;
@@ -37,6 +38,16 @@ const cardscontainer = document.getElementById('cards-container');
 
 const attacksOptionsContainer = document.getElementById('attack-options-container');
 
+let objectPlayerPet;
+
+let map = document.getElementById('map')
+let sectionMap = document.getElementById('map-section')
+
+let canvas = map.getContext('2d')
+
+let mapBackground = new Image()
+mapBackground.src = './assets/mokemap.png'
+
 
 let selectedPlayerPet;
 let selectedEnemyPet;
@@ -46,7 +57,8 @@ let mokeponOption;
 let attackOption;
 let playerPetLives = 5;
 let enemyPetLives = 5;
-let pets = []
+let pets = [];
+let pet;
 
 
 class Mokepon {
@@ -55,9 +67,15 @@ class Mokepon {
         this.image = image;
         this.lives = lives;
         this.attacks = []
+        this.x = 20;
+        this.y = 20;
+        this.width = 80;
+        this.height = 80;
+        this.mapImage = new Image()
+        this.mapImage.src = image
+        this.velocidadX = 0
+        this.velocidadY = 0
     }
-
-    
 }
 
 let hipodoge = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5)
@@ -113,26 +131,34 @@ function startGame(){
     PetButton.addEventListener('click', selectPlayerPet);
     restartButton.addEventListener('click', restartGame);
     sectionSelectAttack.style.display = 'none';
+    sectionMap.style.display = 'none';
     sectiomRestart.style.display = 'none';
 }
 
-function selectPlayerPet (){
+function selectPlayerPet(){
 
     sectionSelectPet.style.display = 'none';
-    sectionSelectAttack.style.display = 'flex';
+    sectionMap.style.display = 'flex'
 
-    if (Hipodoge.checked) {
+    generateMap();
+    
+    /* sectionSelectAttack.style.display = 'flex'; */
+
+    if (inputHipodoge.checked) {
         spanNamePlayerPet.innerHTML = inputHipodoge.id;
         selectedPlayerPet = inputHipodoge.id
-    } else if (Capipepo.checked) {
+    } else if (inputCapipepo.checked) {
         spanNamePlayerPet.innerHTML = inputCapipepo.id;
         selectedPlayerPet = inputCapipepo.id
-    } else if (Ratigueya.checked) {
+    } else if (inputRatigueya.checked) {
         spanNamePlayerPet.innerHTML = inputRatigueya.id;
         selectedPlayerPet = inputRatigueya.id
     } else {
         alert("Please, select a pet")
+        selectPlayerPet();
     }
+
+    printCanva(selectedPlayerPet)
 
     extractPlayerAttacks(selectedPlayerPet);
     selectEnemyPet();
@@ -143,10 +169,7 @@ function extractPlayerAttacks(selectedPlayerPet){
     for (let i = 0; i < pets.length; i++) {
         if (selectedPlayerPet === pets[i].name) {
             attacks = pets[i].attacks;
-        } else {
-
-        }
-        
+        }        
     }
     showAttacks(attacks)
 }
@@ -179,13 +202,103 @@ function selectEnemyPet(){
 }
 
 
-function extractEnemyAttacks(selectedEnemyPet){
+function extractEnemyAttacks(selectedEnemyPet){ 
 
     for (let i = 0; i < pets.length; i++) {
         if (selectedEnemyPet === pets[i].name) {
             enemyPetAttacks = pets[i].attacks;
         }
     }
+}
+
+
+function generateMap() {
+
+    map.width = 320
+    map.height = 240
+    window.addEventListener('keydown', movePet)
+
+    window.addEventListener('keyup', moveStop)
+}
+
+function printCanva(selectedPlayerPet) {
+    canvas.clearRect(0, 0, map.width, map.height)
+    for (let i = 0; i < pets.length; i++) {
+        if (selectedPlayerPet == pets[i].name) {
+            pet = pets[i];
+            pet.x += pet.velocidadX
+            pet.y += pet.velocidadY
+            console.log(mapBackground.src)
+            canvas.drawImage(
+                mapBackground,
+                0,
+                0,
+                map.width,
+                map.height,
+            )
+            console.log(map.width + ' ' + map.height)
+            canvas.drawImage(
+                pet.mapImage,
+                pet.x,
+                pet.y,
+                pet.width,
+                pet.height,
+            )
+        }
+    }
+}
+
+function getPetObject (){
+    for (let i = 0; i < pets.length; i++) {
+        if (selectedPlayerPet == pets[i].name) {
+            return pets[i];
+        }
+    }
+}
+
+function movePet(event) {
+    switch (event.key) {
+        case 'ArrowUp':
+            moveUp()
+            break
+        case 'ArrowDown':
+            moveDown()
+            break
+        case 'ArrowLeft':
+            moveLeft()
+            break
+        case 'ArrowRight':
+            moveRight()
+            break
+        default:
+            break
+    }
+}
+
+function moveUp() {
+    pet.velocidadY = -5;
+    printCanva(pet.name)
+}
+
+function moveDown() {
+    pet.velocidadY = 5;
+    printCanva(pet.name)
+}
+
+function moveRight() {
+    pet.velocidadX = 5;
+    printCanva(pet.name)
+}
+
+function moveLeft() {
+    pet.velocidadX = -5;
+    printCanva(pet.name)
+}
+
+function moveStop() {
+    pet.velocidadX = 0;
+    pet.velocidadY = 0;
+    printCanva(pet.name)
 }
 
 function attackSequence(){
@@ -330,6 +443,8 @@ function aleatory(min, max){
 function restartGame(){
     location.reload();
 }
+
+
 
 
 
