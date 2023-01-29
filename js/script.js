@@ -42,6 +42,13 @@ let objectPlayerPet;
 
 let map = document.getElementById('map')
 let sectionMap = document.getElementById('map-section')
+let mapHeight
+let mapWidth = window.innerWidth - 20
+
+mapHeight = mapWidth * 600 / 800
+
+map.width = mapWidth
+map.height = mapHeight
 
 let canvas = map.getContext('2d')
 
@@ -62,15 +69,15 @@ let pet;
 
 
 class Mokepon {
-    constructor(name, image, lives, avatar, x = 10 , y = 10) {
+    constructor(name, image, lives, avatar) {
         this.name = name;
         this.image = image;
         this.lives = lives;
         this.attacks = []
-        this.x = x;
-        this.y = y;
         this.width = 40;
         this.height = 40;
+        this.x = aleatory(0, map.width - this.width)
+        this.y = aleatory(0, map.height - this.height)
         this.mapImage = new Image()
         this.mapImage.src = avatar
         this.velocidadX = 0
@@ -92,9 +99,9 @@ let hipodoge = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.
 let capipepo = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5, './assets/capipepo.png')
 let ratigueya = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5, './assets/ratigueya.png')
 
-let hipodogeEnemy = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5, './assets/hipodoge.png', 80, 120)
-let capipepoEnemy = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5, './assets/capipepo.png', 150, 95)
-let ratigueyaEnemy = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5, './assets/ratigueya.png', 200, 190)
+let hipodogeEnemy = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5, './assets/hipodoge.png')
+let capipepoEnemy = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5, './assets/capipepo.png')
+let ratigueyaEnemy = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5, './assets/ratigueya.png')
 
 hipodoge.attacks.push(
     { name: "Water 💧", id: "button-Water" },
@@ -113,6 +120,30 @@ capipepo.attacks.push(
 )
 
 ratigueya.attacks.push(
+    { name: "Fire 🔥", id: "button-Fire" },
+    { name: "Fire 🔥", id: "button-Fire" },
+    { name: "Volt ⚡", id: "button-Volt" },
+    { name: "Volt ⚡", id: "button-Volt" },
+    { name: "Volt ⚡", id: "button-Volt" }
+)
+
+hipodogeEnemy.attacks.push(
+    { name: "Water 💧", id: "button-Water" },
+    { name: "Water 💧", id: "button-Water" },
+    { name: "Water 💧", id: "button-Water" },
+    { name: "Ground 🌱", id: "button-Ground" },
+    { name: "Ground 🌱", id: "button-Ground" }
+)
+
+capipepoEnemy.attacks.push(
+    { name: "Fire 🔥", id: "button-Fire" },
+    { name: "Ground 🌱", id: "button-Ground" },
+    { name: "Ground 🌱", id: "button-Ground" },
+    { name: "Ground 🌱", id: "button-Ground" },
+    { name: "Water 💧", id: "button-Water" }
+)
+
+ratigueyaEnemy.attacks.push(
     { name: "Fire 🔥", id: "button-Fire" },
     { name: "Fire 🔥", id: "button-Fire" },
     { name: "Volt ⚡", id: "button-Volt" },
@@ -154,9 +185,6 @@ function selectPlayerPet(){
     sectionSelectPet.style.display = 'none';
     sectionMap.style.display = 'flex'
 
-    
-    /* sectionSelectAttack.style.display = 'flex'; */
-
     if (inputHipodoge.checked) {
         spanNamePlayerPet.innerHTML = inputHipodoge.id;
         selectedPlayerPet = inputHipodoge.id
@@ -167,69 +195,19 @@ function selectPlayerPet(){
         spanNamePlayerPet.innerHTML = inputRatigueya.id;
         selectedPlayerPet = inputRatigueya.id
     } else {
-        alert("Please, select a pet")
         selectPlayerPet();
     }
 
     generateMap();
-    printCanva()
+    printCanva();
 
     extractPlayerAttacks(selectedPlayerPet);
-    selectEnemyPet();
 }
 
-function extractPlayerAttacks(selectedPlayerPet){
-    let attacks;
-    for (let i = 0; i < pets.length; i++) {
-        if (selectedPlayerPet === pets[i].name) {
-            attacks = pets[i].attacks;
-        }        
-    }
-    showAttacks(attacks)
-}
-
-function showAttacks(attacks) {
-
-    attacks.forEach((attack) => {
-
-        attackOption = `
-        <button class="attack-button button-class-listener" id=${attack.id}>${attack.name}</button>
-        `
-        attacksOptionsContainer.innerHTML += attackOption;
-    })
-    
-    FireButton = document.getElementById('button-Fire');
-    VoltButton = document.getElementById('button-Volt');
-    GroundButton = document.getElementById('button-Ground');
-    WaterButton = document.getElementById('button-Water');
-    
-    attacksOptionsButtons = document.querySelectorAll('.button-class-listener');
-}
-
-function selectEnemyPet(){
-    let aleatoryEnemyPet = aleatory(0, pets.length - 1);
-    spanNameEnemyPet.innerHTML = pets[aleatoryEnemyPet].name;
-    selectedEnemyPet = pets[aleatoryEnemyPet].name;
-
-    extractEnemyAttacks(selectedEnemyPet)
-    attackSequence();
-}
-
-
-function extractEnemyAttacks(selectedEnemyPet){ 
-
-    for (let i = 0; i < pets.length; i++) {
-        if (selectedEnemyPet === pets[i].name) {
-            enemyPetAttacks = pets[i].attacks;
-        }
-    }
-}
 
 
 function generateMap() {
-
-    map.width = 320
-    map.height = 240
+    
     objectPlayerPet = getPetObject(selectedPlayerPet)
     window.addEventListener('keydown', movePet)
 
@@ -246,20 +224,20 @@ function printCanva() {
         0,
         map.width,
         map.height,
-    )
-    objectPlayerPet.printPet()
-    hipodogeEnemy.printPet()
-    capipepoEnemy.printPet()
-    ratigueyaEnemy.printPet()
-    if (objectPlayerPet.velocidadX !== 0 || objectPlayerPet.velocidadY !== 0) {
-        checkCollision(hipodogeEnemy)
-        checkCollision(capipepoEnemy)
-        checkCollision(ratigueyaEnemy)
-
+        )
+        objectPlayerPet.printPet()
+        hipodogeEnemy.printPet()
+        capipepoEnemy.printPet()
+        ratigueyaEnemy.printPet()
+        if (objectPlayerPet.velocidadX !== 0 || objectPlayerPet.velocidadY !== 0) {
+            checkCollision(hipodogeEnemy)
+            checkCollision(capipepoEnemy)
+            checkCollision(ratigueyaEnemy)
+            
+        }
+        
     }
-
-}
-
+    
 function getPetObject (petRequest){
     for (let i = 0; i < pets.length; i++) {
         if (petRequest == pets[i].name) {
@@ -316,12 +294,12 @@ function moveStop() {
 function checkCollision(enemigo){
     const upPlayerPet = objectPlayerPet.y
     const downPlayerPet = objectPlayerPet.y + objectPlayerPet.height
-    const rightPlayerPet = objectPlayerPet.y + objectPlayerPet.width
+    const rightPlayerPet = objectPlayerPet.x + objectPlayerPet.width
     const leftPlayerPet = objectPlayerPet.x
-
+    
     const upEnemyPet = enemigo.y
     const downEnemyPet = enemigo.y + enemigo.height
-    const rightEnemyPet = enemigo.y + enemigo.width
+    const rightEnemyPet = enemigo.x + enemigo.width
     const leftEnemyPet = enemigo.x
 
     if (
@@ -332,7 +310,58 @@ function checkCollision(enemigo){
     ) {
         return
     }
-    alert('colisiooon')
+
+    sectionMap.style.display = 'none'
+    sectionSelectAttack.style.display = 'flex';
+
+    
+    selectEnemyPet(enemigo);
+}
+
+function extractPlayerAttacks(selectedPlayerPet){
+    let attacks;
+    for (let i = 0; i < pets.length; i++) {
+        if (selectedPlayerPet === pets[i].name) {
+            attacks = pets[i].attacks;
+        }        
+    }
+    showAttacks(attacks)
+}
+
+function showAttacks(attacks) {
+
+    attacks.forEach((attack) => {
+
+        attackOption = `
+        <button class="attack-button button-class-listener" id=${attack.id}>${attack.name}</button>
+        `
+        attacksOptionsContainer.innerHTML += attackOption;
+    })
+    
+    FireButton = document.getElementById('button-Fire');
+    VoltButton = document.getElementById('button-Volt');
+    GroundButton = document.getElementById('button-Ground');
+    WaterButton = document.getElementById('button-Water');
+    
+    attacksOptionsButtons = document.querySelectorAll('.button-class-listener');
+}
+
+function selectEnemyPet(enemigo){
+    spanNameEnemyPet.innerHTML = enemigo.name;
+    selectedEnemyPet = enemigo.name;
+
+    extractEnemyAttacks(selectedEnemyPet)
+    attackSequence();
+}
+
+function extractEnemyAttacks(selectedEnemyPet){ 
+
+    for (let i = 0; i < pets.length; i++) {
+        if (selectedEnemyPet === pets[i].name) {
+            enemyPetAttacks = pets[i].attacks;
+            console.log(enemyPetAttacks)
+        }
+    }
 }
 
 function attackSequence(){
@@ -370,12 +399,12 @@ function attackSequence(){
 
 function enemyAttack(){
 
-    
     let aleatoryEnemyAttack = aleatory(0, enemyPetAttacks.length -1);
     if (usedEnemyAttacksIndexes.length == 0) {
         usedEnemyAttacksIndexes.push(aleatoryEnemyAttack)
         enemyAttacks.push(enemyPetAttacks[aleatoryEnemyAttack].name);
         selectedEnemyAttack = enemyPetAttacks[aleatoryEnemyAttack].name;
+        combat()
     } else {
         compare = usedEnemyAttacksIndexes.find(value => value == aleatoryEnemyAttack);
         if (compare == undefined) {
@@ -383,13 +412,11 @@ function enemyAttack(){
             enemyAttacks.push(enemyPetAttacks[aleatoryEnemyAttack].name);
             selectedEnemyAttack = enemyPetAttacks[aleatoryEnemyAttack].name;
             console.log(usedEnemyAttacksIndexes)
+            combat()
         }else{
             enemyAttack()
         }
-    }
-    console.log(enemyAttacks)
-    combat()
-    
+    }    
 }
 
 function combat(){
@@ -447,6 +474,7 @@ function checkLives() {
 function createResultMessage(result){
 
     currentPlayerAttack = document.createElement('p')
+
     currentEnemyAttack = document.createElement('p')
 
     currentPlayerAttack.innerHTML = selectedPlayerAttack;
@@ -460,11 +488,6 @@ function createResultMessage(result){
 
 function createFinalMessage(result){
     messageSection.innerHTML = 'Your have ' + result + '!!!';
-
-    FireButton.disabled = true;
-    VoltButton.disabled = true;
-    GroundButton.disabled = true;
-    WaterButton.disabled = true;
 
     sectiomRestart.style.display = 'inline'
 }
