@@ -62,25 +62,39 @@ let pet;
 
 
 class Mokepon {
-    constructor(name, image, lives) {
+    constructor(name, image, lives, avatar, x = 10 , y = 10) {
         this.name = name;
         this.image = image;
         this.lives = lives;
         this.attacks = []
-        this.x = 20;
-        this.y = 20;
-        this.width = 80;
-        this.height = 80;
+        this.x = x;
+        this.y = y;
+        this.width = 40;
+        this.height = 40;
         this.mapImage = new Image()
-        this.mapImage.src = image
+        this.mapImage.src = avatar
         this.velocidadX = 0
         this.velocidadY = 0
     }
+
+    printPet(){
+        canvas.drawImage(
+            this.mapImage,
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+        )
+    }
 }
 
-let hipodoge = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5)
-let capipepo = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5)
-let ratigueya = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5)
+let hipodoge = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5, './assets/hipodoge.png')
+let capipepo = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5, './assets/capipepo.png')
+let ratigueya = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5, './assets/ratigueya.png')
+
+let hipodogeEnemy = new Mokepon("Hipodoge", "assets/mokepons_mokepon_hipodoge_attack.png", 5, './assets/hipodoge.png', 80, 120)
+let capipepoEnemy = new Mokepon("Capipepo", "assets/mokepons_mokepon_capipepo_attack.png", 5, './assets/capipepo.png', 150, 95)
+let ratigueyaEnemy = new Mokepon("Ratigueya", "assets/mokepons_mokepon_ratigueya_attack.png", 5, './assets/ratigueya.png', 200, 190)
 
 hipodoge.attacks.push(
     { name: "Water 💧", id: "button-Water" },
@@ -140,7 +154,6 @@ function selectPlayerPet(){
     sectionSelectPet.style.display = 'none';
     sectionMap.style.display = 'flex'
 
-    generateMap();
     
     /* sectionSelectAttack.style.display = 'flex'; */
 
@@ -158,7 +171,8 @@ function selectPlayerPet(){
         selectPlayerPet();
     }
 
-    printCanva(selectedPlayerPet)
+    generateMap();
+    printCanva()
 
     extractPlayerAttacks(selectedPlayerPet);
     selectEnemyPet();
@@ -216,41 +230,39 @@ function generateMap() {
 
     map.width = 320
     map.height = 240
+    objectPlayerPet = getPetObject(selectedPlayerPet)
     window.addEventListener('keydown', movePet)
 
     window.addEventListener('keyup', moveStop)
 }
 
-function printCanva(selectedPlayerPet) {
+function printCanva() {
     canvas.clearRect(0, 0, map.width, map.height)
-    for (let i = 0; i < pets.length; i++) {
-        if (selectedPlayerPet == pets[i].name) {
-            pet = pets[i];
-            pet.x += pet.velocidadX
-            pet.y += pet.velocidadY
-            console.log(mapBackground.src)
-            canvas.drawImage(
-                mapBackground,
-                0,
-                0,
-                map.width,
-                map.height,
-            )
-            console.log(map.width + ' ' + map.height)
-            canvas.drawImage(
-                pet.mapImage,
-                pet.x,
-                pet.y,
-                pet.width,
-                pet.height,
-            )
-        }
+    objectPlayerPet.x += objectPlayerPet.velocidadX
+    objectPlayerPet.y += objectPlayerPet.velocidadY
+    canvas.drawImage(
+        mapBackground,
+        0,
+        0,
+        map.width,
+        map.height,
+    )
+    objectPlayerPet.printPet()
+    hipodogeEnemy.printPet()
+    capipepoEnemy.printPet()
+    ratigueyaEnemy.printPet()
+    if (objectPlayerPet.velocidadX !== 0 || objectPlayerPet.velocidadY !== 0) {
+        checkCollision(hipodogeEnemy)
+        checkCollision(capipepoEnemy)
+        checkCollision(ratigueyaEnemy)
+
     }
+
 }
 
-function getPetObject (){
+function getPetObject (petRequest){
     for (let i = 0; i < pets.length; i++) {
-        if (selectedPlayerPet == pets[i].name) {
+        if (petRequest == pets[i].name) {
             return pets[i];
         }
     }
@@ -276,29 +288,51 @@ function movePet(event) {
 }
 
 function moveUp() {
-    pet.velocidadY = -5;
-    printCanva(pet.name)
+    objectPlayerPet.velocidadY = -5;
+    printCanva()
 }
 
 function moveDown() {
-    pet.velocidadY = 5;
-    printCanva(pet.name)
+    objectPlayerPet.velocidadY = 5;
+    printCanva()
 }
 
 function moveRight() {
-    pet.velocidadX = 5;
-    printCanva(pet.name)
+    objectPlayerPet.velocidadX = 5;
+    printCanva()
 }
 
 function moveLeft() {
-    pet.velocidadX = -5;
-    printCanva(pet.name)
+    objectPlayerPet.velocidadX = -5;
+    printCanva()
 }
 
 function moveStop() {
-    pet.velocidadX = 0;
-    pet.velocidadY = 0;
-    printCanva(pet.name)
+    objectPlayerPet.velocidadX = 0;
+    objectPlayerPet.velocidadY = 0;
+    printCanva()
+}
+
+function checkCollision(enemigo){
+    const upPlayerPet = objectPlayerPet.y
+    const downPlayerPet = objectPlayerPet.y + objectPlayerPet.height
+    const rightPlayerPet = objectPlayerPet.y + objectPlayerPet.width
+    const leftPlayerPet = objectPlayerPet.x
+
+    const upEnemyPet = enemigo.y
+    const downEnemyPet = enemigo.y + enemigo.height
+    const rightEnemyPet = enemigo.y + enemigo.width
+    const leftEnemyPet = enemigo.x
+
+    if (
+        upPlayerPet < upEnemyPet ||
+        downPlayerPet > downEnemyPet ||
+        rightPlayerPet < rightEnemyPet ||
+        leftPlayerPet > leftEnemyPet
+    ) {
+        return
+    }
+    alert('colisiooon')
 }
 
 function attackSequence(){
