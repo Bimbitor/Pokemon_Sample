@@ -55,7 +55,7 @@ let canvas = map.getContext('2d')
 let mapBackground = new Image()
 mapBackground.src = './assets/mokemap.png'
 
-
+let jugadorId = null
 let selectedPlayerPet;
 let selectedEnemyPet;
 let selectedPlayerAttack;
@@ -173,11 +173,24 @@ function startGame(){
     inputRatigueya = document.getElementById('Ratigueya');
     })
 
+    joinGame()
     PetButton.addEventListener('click', selectPlayerPet);
     restartButton.addEventListener('click', restartGame);
     sectionSelectAttack.style.display = 'none';
     sectionMap.style.display = 'none';
     sectiomRestart.style.display = 'none';
+}
+
+function joinGame() {
+    fetch("http://localhost:8080/join")
+        .then(function(res) {
+            if (res.ok) {
+                res.text()
+                    .then(function (response){
+                        jugadorId = response
+                    })
+            }
+        })
 }
 
 function selectPlayerPet(){
@@ -198,13 +211,25 @@ function selectPlayerPet(){
         selectPlayerPet();
     }
 
+    sendPetBackend(selectedPlayerPet)
+
     generateMap();
     printCanva();
 
     extractPlayerAttacks(selectedPlayerPet);
 }
 
-
+function sendPetBackend(selectedPlayerPet) {
+    fetch(`http://localhost:8080/pet/${jugadorId}`,{
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            pet: selectedPlayerPet
+        })
+    })
+}
 
 function generateMap() {
     
