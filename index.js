@@ -10,7 +10,18 @@ const players= []
 
 class Player {
     constructor(id){
-        this.id = id
+        this.id = id;
+    }
+
+    asignPet(pet){
+        this.pet = pet;
+    }
+
+}
+
+class Pet{
+    constructor (name){
+        this.name = name;
     }
 }
 
@@ -24,8 +35,15 @@ app.get("/join", (req, res) => {
 })
 
 app.post("/pet/:playerId", (req, res) => {
-    console.log(players)
     const playerId = req.params.playerId || "No llegó"
+    const petName = req.body.pet || "Vacíoooooo"
+    const pet = new Pet(petName)
+    const playerIndex = players.findIndex((player) => playerId === player.id)
+    
+    if (playerIndex >= 0) {
+        players[playerIndex].asignPet(pet)
+    }
+    console.log(players)
     console.log(playerId)
     res.end()
 })

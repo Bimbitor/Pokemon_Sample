@@ -187,6 +187,7 @@ function joinGame() {
             if (res.ok) {
                 res.text()
                     .then(function (response){
+                        console.log(response)
                         jugadorId = response
                     })
             }
