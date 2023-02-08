@@ -17,6 +17,11 @@ class Player {
         this.pet = pet;
     }
 
+    updatePosition(x, y){
+        this.x = x;
+        this.y = y;
+    }
+
 }
 
 class Pet{
@@ -45,6 +50,23 @@ app.post("/pet/:playerId", (req, res) => {
     }
     console.log(players)
     console.log(playerId)
+    res.end()
+})
+
+app.post("/pet/:playerId/position", (req, res) => {
+
+
+    
+    const playerId = req.params.playerId || "No llegó"
+    const x = req.body.x || 0
+    const y = req.body.y || 0
+
+    const playerIndex = players.findIndex((player) => playerId === player.id)
+    
+    if (playerIndex >= 0) {
+        players[playerIndex].updatePosition(x,y)
+    }
+
     res.end()
 })
 

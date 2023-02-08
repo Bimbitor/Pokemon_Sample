@@ -250,19 +250,34 @@ function printCanva() {
         0,
         map.width,
         map.height,
-        )
-        objectPlayerPet.printPet()
-        hipodogeEnemy.printPet()
-        capipepoEnemy.printPet()
-        ratigueyaEnemy.printPet()
-        if (objectPlayerPet.velocidadX !== 0 || objectPlayerPet.velocidadY !== 0) {
-            checkCollision(hipodogeEnemy)
-            checkCollision(capipepoEnemy)
-            checkCollision(ratigueyaEnemy)
-            
-        }
+    )
+    objectPlayerPet.printPet()
+
+    sentPosition(objectPlayerPet.x, objectPlayerPet.y)
+
+    hipodogeEnemy.printPet()
+    capipepoEnemy.printPet()
+    ratigueyaEnemy.printPet()
+    if (objectPlayerPet.velocidadX !== 0 || objectPlayerPet.velocidadY !== 0) {
+        checkCollision(hipodogeEnemy)
+        checkCollision(capipepoEnemy)
+        checkCollision(ratigueyaEnemy)
         
     }
+}
+
+function sentPosition(x, y){
+    fetch(`http://localhost:8080/pet/${jugadorId}/position`,{
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            x,
+            y
+        })
+    })
+}
     
 function getPetObject (petRequest){
     for (let i = 0; i < pets.length; i++) {
